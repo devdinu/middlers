@@ -13,7 +13,7 @@ import (
 func TestRequestLoggerWithCustomLogger(t *testing.T) {
 	l := log.New(os.Stdout, "customlogger: ", 0)
 	called := false
-	next := func(w http.ResponseWriter, r *http.Request) { called = true }
+	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { called = true })
 	h := RequestLogger(next, l)
 	req, _ := http.NewRequest("GET", "/some/url", nil)
 
@@ -23,7 +23,7 @@ func TestRequestLoggerWithCustomLogger(t *testing.T) {
 
 func TestRequestLoggerWithNoLogger(t *testing.T) {
 	called := false
-	next := func(w http.ResponseWriter, r *http.Request) { called = true }
+	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { called = true })
 	h := RequestLogger(next)
 	req, _ := http.NewRequest("GET", "/some/url", nil)
 

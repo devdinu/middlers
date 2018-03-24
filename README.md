@@ -22,6 +22,16 @@ This ensures the request process completes without timeout, else writes `Gateway
 ```
 This changes the `http.Request` context to `context.WithTimeout(r.Context(), duration)`
 
+### Filter Middleware
+Filter middleware could be used to block requests based on some `predicate`, you could use this to validate request based on header, url or body
+ ```
+    predicate := func(r *http.Request) bool {
+        var result bool
+        // bool to decide whether to block / pass the request
+        return result
+    }
+    withFilter := gomw.Filter(predicate, handler)
+```
 
 ## License
 

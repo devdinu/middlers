@@ -24,7 +24,7 @@ func (rl *requestLog) String() string {
 		rl.r.Method, rl.r.URL.Path, rl.start.Format(time.RFC3339), rl.end.Format(time.RFC3339), rl.end.Sub(rl.start)*time.Millisecond)
 }
 
-func RequestLogger(next http.HandlerFunc, optloggers ...logger) http.HandlerFunc {
+func RequestLogger(next http.Handler, optloggers ...logger) http.HandlerFunc {
 	var clogger logger
 	if len(optloggers) > 0 {
 		clogger = optloggers[0]
@@ -35,7 +35,7 @@ func RequestLogger(next http.HandlerFunc, optloggers ...logger) http.HandlerFunc
 		rl := &requestLog{}
 		rl.start = time.Now()
 
-		next(w, r)
+		next.ServeHTTP(w, r)
 
 		rl.end = time.Now()
 		rl.r = r

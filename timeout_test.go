@@ -10,15 +10,19 @@ import (
 )
 
 type nextHandler struct {
-	run     func()
-	called  bool
-	success bool
+	run        func()
+	called     bool
+	success    bool
+	totalCalls int
 }
 
 func (h *nextHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.called = true
-	h.run()
+	if h.run != nil {
+		h.run()
+	}
 	h.success = true
+	h.totalCalls++
 }
 
 func TestTimeoutMiddlewareCtxDeadlineExcceeded(t *testing.T) {
