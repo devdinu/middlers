@@ -1,4 +1,6 @@
 # Middlers
+[![Build Status](https://travis-ci.org/devdinu/middlers.svg?branch=master)](https://travis-ci.org/devdinu/middlers)
+
 Go HTTP Middlewares
 
 ### Request Logger Middleware
