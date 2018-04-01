@@ -2,16 +2,16 @@ package gomw
 
 import "net/http"
 
-type responseWriter struct {
+type ResponseWriter struct {
 	http.ResponseWriter
 	StatusCode int
 }
 
-func (rw *responseWriter) WriteHeader(statusCode int) {
+func (rw *ResponseWriter) WriteHeader(statusCode int) {
 	rw.ResponseWriter.WriteHeader(statusCode)
 	rw.StatusCode = statusCode
 }
 
-func NewResponseWriter(w http.ResponseWriter) *responseWriter {
-	return &responseWriter{ResponseWriter: w, StatusCode: 200}
+func NewResponseWriter(w http.ResponseWriter) *ResponseWriter {
+	return &ResponseWriter{ResponseWriter: w, StatusCode: 200}
 }
