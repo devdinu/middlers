@@ -14,6 +14,7 @@ type nextHandler struct {
 	called     bool
 	success    bool
 	totalCalls int
+	statusCode int
 }
 
 func (h *nextHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +24,9 @@ func (h *nextHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	h.success = true
 	h.totalCalls++
+	if h.statusCode != 0 {
+		w.WriteHeader(h.statusCode)
+	}
 }
 
 func TestTimeoutMiddlewareCtxDeadlineExcceeded(t *testing.T) {

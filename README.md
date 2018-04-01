@@ -32,6 +32,12 @@ Filter middleware could be used to block requests based on some `predicate`, you
     }
     withFilter := gomw.Filter(predicate, handler)
 ```
+### Stats Middleware
+Stats middleware reports the url calls to stats, it uses `Increment(string)` interface to increment the url along with status code. `host:/some/url, with status 200`
+would increment stats as `some_url_ok` `http.StatusText` used to convert the statuscode, and `/` is replaced with `_`
+```
+    withReporter := StatsReporter(reporter)(next)
+```
 
 ## License
 
@@ -39,3 +45,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## TODO:
 - Support for negroni middleware
+- Make all middlewares adhere to `Middleware`
+- stats middleware report statuscode as tags
