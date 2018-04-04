@@ -46,6 +46,16 @@ would increment stats as `some_url_ok` `http.StatusText` used to convert the sta
     withReporter := gomw.StatsReporter(reporter)(next)
 ```
 
+### BeforeAfter Middleware
+You could run a custom function before executes before the handler, and after executes after handler completion. After is executed even if handler panics
+
+```
+    before := func() { ... }
+    after := func() { ... }
+    mw := gomw.ExecutionHooks(before, after)(next)
+```
+
+
 ## Contribution
 - create issues or share your opinions/future enhancements
 - clone repo and make the changes you want, new features, run
@@ -59,6 +69,7 @@ fix lint and vet errors if any, and create a PR.
 
 reach out to me dineshkumar in gophers slack.
 
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
@@ -67,3 +78,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Support for negroni middleware
 - Make all middlewares adhere to `Middleware`
 - stats middleware report statuscode as tags
+- panic recovery handler
