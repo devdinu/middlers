@@ -10,14 +10,14 @@ Add middlers package as your dependency, with go get or either of your dependenc
 
 ### Request Logger Middleware
 
-You could wrap it with a handler `http.HandlerFunc` or `http.Handler`
+You could wrap it with a handler `http.HandlerFunc` or `http.Handler`, You could use a custom logger or `log.New(io.Writer...)` any interface which have `Println(...interface{})` implementation.
 ``` 
-    h := gomw.RequestLogger(handler)
+    mw := gomw.RequestLogger(handler)
+    hmw := gomw.RequestLogger(handler, customLogger) // with logger
 ```
-
-You could use a custom logger or log.New(io.Writer...) any interface which have Println implementation
+This logs each request information as json
 ```
-    h := gomw.RequestLogger(handler, customLogger)
+{"method: GET, url: /some/url, status: 200, requested_at: 2018-04-04T20:52:06+05:30, resonse_at: 2018-04-04T20:52:06+05:30, duration_ms: 132ms}
 ```
 
 ### Timeout Middleware

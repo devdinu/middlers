@@ -13,15 +13,16 @@ type logger interface {
 }
 
 type requestLog struct {
-	start time.Time
-	end   time.Time
-	r     *http.Request
+	start  time.Time
+	end    time.Time
+	r      *http.Request
+	status int
 }
 
 func (rl *requestLog) String() string {
 	//TODO: could log status if its negroni.ResponseWriter
-	return fmt.Sprintf("method: %s, url: %s, requested_at: %v, resonse_at: %v, duration_ms: %v",
-		rl.r.Method, rl.r.URL.Path, rl.start.Format(time.RFC3339), rl.end.Format(time.RFC3339), rl.end.Sub(rl.start)*time.Millisecond)
+	return fmt.Sprintf(`{"method: %s, url: %s, status: %d, requested_at: %v, response_at: %v, duration_ms: %v}`,
+		rl.r.Method, rl.r.URL.Path, rl.status, rl.start.Format(time.RFC3339), rl.end.Format(time.RFC3339), rl.end.Sub(rl.start)*time.Millisecond)
 }
 
 func RequestLogger(next http.Handler, optloggers ...logger) http.HandlerFunc {
@@ -34,11 +35,13 @@ func RequestLogger(next http.Handler, optloggers ...logger) http.HandlerFunc {
 	mw := func(w http.ResponseWriter, r *http.Request) {
 		rl := &requestLog{}
 		rl.start = time.Now()
+		rw := NewResponseWriter(w)
 
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(rw, r)
 
 		rl.end = time.Now()
 		rl.r = r
+		rl.status = rw.StatusCode
 		clogger.Println(rl.String())
 	}
 	return http.HandlerFunc(mw)
