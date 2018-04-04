@@ -29,6 +29,13 @@ This ensures the request process completes without timeout, else writes `Gateway
 ```
 This changes the `http.Request` context to `context.WithTimeout(r.Context(), duration)`
 
+### Recovery Handler
+You could use this handler to recover from any panic from your handlers, and return `500` Internal Server Error.
+```
+    logger // adheres to Println(...interface{}), also could be nil
+    withRecovery := gomw.Recovery(logger)(next)
+```
+
 ### Filter Middleware
 Filter middleware could be used to block requests based on some `predicate`, you could use this to validate request based on header, url or body
  ```
@@ -39,6 +46,7 @@ Filter middleware could be used to block requests based on some `predicate`, you
     }
     withFilter := gomw.Filter(predicate, handler)
 ```
+
 ### Stats Middleware
 Stats middleware reports the url calls to stats, it uses `Increment(string)` interface to increment the url along with status code. `host:/some/url, with status 200`
 would increment stats as `some_url_ok` `http.StatusText` used to convert the statuscode, and `/` is replaced with `_`
@@ -78,4 +86,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Support for negroni middleware
 - Make all middlewares adhere to `Middleware`
 - stats middleware report statuscode as tags
-- panic recovery handler
