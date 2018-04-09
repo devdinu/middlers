@@ -32,7 +32,7 @@ func (h *nextHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func TestTimeoutMiddlewareCtxDeadlineExcceeded(t *testing.T) {
 	next := &nextHandler{run: func() { time.Sleep(10 * time.Millisecond) }}
 	d := 5 * time.Millisecond
-	handler := Timeout(next, d)
+	handler := Timeout(d)(next)
 	req, _ := http.NewRequest("GET", "/some/url", nil)
 	w := httptest.NewRecorder()
 
@@ -46,7 +46,7 @@ func TestTimeoutMiddlewareCtxDeadlineExcceeded(t *testing.T) {
 func TestTimeoutMiddlewareHandlerSucceedsBeforeDeadline(t *testing.T) {
 	next := &nextHandler{run: func() { time.Sleep(10 * time.Millisecond) }}
 	d := 15 * time.Millisecond
-	handler := Timeout(next, d)
+	handler := Timeout(d)(next)
 	req, _ := http.NewRequest("GET", "/some/url/success", nil)
 	w := httptest.NewRecorder()
 

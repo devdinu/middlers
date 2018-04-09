@@ -17,11 +17,11 @@ func TestMiddlewareToCallNext(t *testing.T) {
 	}{
 		{
 			description: "call next from TimeoutMiddleware",
-			handler:     Timeout(next, time.Second),
+			handler:     Timeout(time.Second)(next),
 		},
 		{
 			description: "call next from Filter Middleware",
-			handler:     Filter(func(r *http.Request) bool { return true }, next),
+			handler:     Filter(func(r *http.Request) bool { return true })(next),
 		},
 		{
 			description: "call next from logger middleware",

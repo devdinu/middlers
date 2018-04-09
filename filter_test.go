@@ -15,7 +15,7 @@ func TestFilterMiddleware(t *testing.T) {
 
 	t.Run("should not call next on false predicate", func(t *testing.T) {
 		next := &nextHandler{}
-		h := Filter(block, next)
+		h := Filter(block)(next)
 		w := httptest.NewRecorder()
 
 		h.ServeHTTP(w, r)
@@ -26,7 +26,7 @@ func TestFilterMiddleware(t *testing.T) {
 
 	t.Run("should call next on true predicate", func(t *testing.T) {
 		next := &nextHandler{}
-		h := Filter(allow, next)
+		h := Filter(allow)(next)
 		w := httptest.NewRecorder()
 
 		h.ServeHTTP(w, r)

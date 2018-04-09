@@ -25,7 +25,7 @@ This logs each request information as json
 This ensures the request process completes without timeout, else writes `GatewayTimeout` header
 ```
     duration := 100*time.Millisecond
-    withTimeout := gomw.Timeout(handler, duration)
+    withTimeout := gomw.Timeout(duration)(handler)
 ```
 This changes the `http.Request` context to `context.WithTimeout(r.Context(), duration)`
 
@@ -44,7 +44,7 @@ Filter middleware could be used to block requests based on some `predicate`, you
         // bool to decide whether to block / pass the request
         return result
     }
-    withFilter := gomw.Filter(predicate, handler)
+    withFilter := gomw.Filter(predicate)(handler)
 ```
 
 ### Stats Middleware
@@ -83,6 +83,6 @@ reach out to me dineshkumar in gophers slack.
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## TODO:
-- Support for negroni middleware
-- Make all middlewares adhere to `Middleware`
-- stats middleware report statuscode as tags
+- Stats middleware report statuscode as tags
+- Fix race condition
+- Newrelic Transaction middleware
