@@ -35,7 +35,7 @@ func TestShouldLogAsJsonProperly(t *testing.T) {
 	l := &clogger{}
 	r, _ := http.NewRequest("GET", "/ping/url", nil)
 
-	RequestLogger(&nextHandler{}, l)(httptest.NewRecorder(), r)
+	RequestLogger(newMockNextHandler(), l)(httptest.NewRecorder(), r)
 
 	assert.Regexp(t, "{\"method: GET, url: /ping/url, status: 200, requested_at: .*, response_at: .*, duration_ms: .*}", l.log)
 }

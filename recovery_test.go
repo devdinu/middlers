@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestShouldRecoverFromPanicWithLog(t *testing.T) {
-	next := &nextHandler{run: func() { panic("Some Error") }}
+	next := &nextHandler{run: func() { panic("Some Error") }, Mutex: &sync.Mutex{}}
 	l := &clogger{}
 	rh := Recovery(l)(next)
 	r, _ := http.NewRequest("GET", "/url", nil)
@@ -24,7 +25,7 @@ func TestShouldRecoverFromPanicWithLog(t *testing.T) {
 }
 
 func TestShouldRecoverFromPanic(t *testing.T) {
-	next := &nextHandler{run: func() { panic("Some Error") }}
+	next := &nextHandler{run: func() { panic("Some Error") }, Mutex: &sync.Mutex{}}
 	rh := Recovery(nil)(next)
 	r, _ := http.NewRequest("GET", "/url", nil)
 	w := httptest.NewRecorder()

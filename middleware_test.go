@@ -10,7 +10,7 @@ import (
 )
 
 func TestMiddlewareToCallNext(t *testing.T) {
-	next := &nextHandler{}
+	next := newMockNextHandler()
 	testcases := []struct {
 		description string
 		handler     http.Handler

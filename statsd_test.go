@@ -3,6 +3,7 @@ package gomw
 import (
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ func (m *MockReporter) Increment(s string) {
 }
 
 func TestShouldIncrementUrlStats(t *testing.T) {
-	next := &nextHandler{statusCode: http.StatusUnauthorized}
+	next := &nextHandler{statusCode: http.StatusUnauthorized, Mutex: &sync.Mutex{}}
 	rmock := new(MockReporter)
 	done := make(chan bool)
 	rmock.On("Increment", "some_path_unauthorized").Run(func(mock.Arguments) { done <- true })
