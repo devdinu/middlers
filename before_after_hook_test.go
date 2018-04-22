@@ -3,6 +3,7 @@ package gomw
 import (
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,7 +11,7 @@ import (
 
 func TestBeforeCall(t *testing.T) {
 	var beforeCalled, afterCalled bool
-	next := &nextHandler{}
+	next := newMockNextHandler()
 	before := func() { beforeCalled = true }
 	after := func() { afterCalled = true }
 
@@ -27,7 +28,8 @@ func TestBeforeCall(t *testing.T) {
 
 func TestShouldCallAfterEvenIfHandlerPanics(t *testing.T) {
 	var beforeCalled, afterCalled bool
-	next := &nextHandler{run: func() { panic("panic error") }}
+	next := newMockNextHandler()
+	next.run = func() { panic("panic error") }
 	before := func() { beforeCalled = true }
 	after := func() { afterCalled = true }
 
@@ -49,7 +51,7 @@ func TestShouldCallAfterEvenIfHandlerPanics(t *testing.T) {
 func TestShouldCallBeforeAfterInOrder(t *testing.T) {
 	var beforeCalled, afterCalled bool
 	var order []string
-	next := &nextHandler{run: func() { order = append(order, "handler") }}
+	next := &nextHandler{run: func() { order = append(order, "handler") }, Mutex: &sync.Mutex{}}
 	before := func() {
 		order = append(order, "before")
 		beforeCalled = true
