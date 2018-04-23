@@ -8,6 +8,34 @@ Add middlers package as your dependency, with go get or either of your dependenc
 - Dep `dep ensure add -v github.com/devdinu/middlers`
 - Glide `glide install -v github.com/devdinu/middlers`
 
+### Ratelimit Middleware
+middleware to ratelimit the request for N requests in a period of time. It writes header `StatusTooManyRequests: 429` for blocked requests, it takes configuration
+```
+  RateLimitConfig{
+    TimeWindowReset // Total wait time window for next reuest to succeed
+    MaxRequests     // Total max requests, beyond this will be ratelimited
+    RequestKey      // a function to fetch key from request
+  }
+```
+
+The following middleware allows 3 successful requests in a period 1 second, and blocks others. Uses the in memory store
+also sets `X-RateLimit-Reset` with total `seconds` time window for which it blocks requests (config `TimeWindowReset`) 
+
+```
+    keyF := func(r *http.Request) string { return r.URL.Path } // you could parse body and use the fields too
+    cfg := RateLimitConfig{MaxRequests: 3, TimeWindowReset: 1000 * time.Millisecond, RequestKey: keyF}
+    rmw := RateLimit(s, cfg)(next)
+    rmw.ServeHTTP(w, r)
+```
+You could use a redis, and use the TTL an implemntation of the interface
+```
+type Store interface {
+	Get(string) int
+	Incr(string)
+	Reset(string)
+}
+```
+
 ### Request Logger Middleware
 
 You could wrap it with a handler `http.HandlerFunc` or `http.Handler`, You could use a custom logger or `log.New(io.Writer...)` any interface which have `Println(...interface{})` implementation.
@@ -84,5 +112,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## TODO:
 - Stats middleware report statuscode as tags
-- Fix race condition
 - Newrelic Transaction middleware
+- Add redis/redigo pool interface based ratelimit
