@@ -23,8 +23,7 @@ also sets `X-RateLimit-Reset` with total `seconds` time window for which it bloc
 
 ```
     keyF := func(r *http.Request) string { return r.URL.Path } // you could parse body and use the fields too
-    cfg := RateLimitConfig{MaxRequests: 3, TimeWindowReset: 1000 * time.Millisecond, RequestKey: keyF}
-    rmw := RateLimit(s, cfg)(next)
+    cfg := RateLimitConfig{MaxRequests: 3, TimeWindowReset: 1000 * time.Millisecond, RequestKey: keyF} rmw := RateLimit(s, cfg)(next)
     rmw.ServeHTTP(w, r)
 ```
 You could use a redis, and use the TTL an implemntation of the interface
@@ -90,6 +89,20 @@ You could run a custom function before executes before the handler, and after ex
     after := func() { ... }
     mw := gomw.ExecutionHooks(before, after)(next)
 ```
+
+### Middler Creation
+You can create a middleware with multiple middlewares stitched by passing `Option`, instead of manual wrapping.
+```
+    var handler http.Handler //Your handler
+    ...
+    gomw.New(handler,
+        gomw.Predicate(predicate),
+        gomw.Logger(logger),
+        gomw.InMemoryRateLimit(ratelimitConfig),
+    )
+
+```
+* `gomw.RateLimitter(store, ratelimitConfig)` - if you wanna use custom store instead of inmemory
 
 
 ## Contribution
