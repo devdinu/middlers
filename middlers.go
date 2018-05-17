@@ -1,12 +1,16 @@
 package gomw
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 type config struct {
 	predicate func(*http.Request) bool
 	rlogger   logger
 	Store
 	RateLimitConfig
+	timeout time.Duration
 }
 
 type Option func(*config)
@@ -19,6 +23,9 @@ func New(next http.Handler, opts ...Option) http.Handler {
 	}
 	if cfg.predicate != nil {
 		handler = Filter(cfg.predicate)(handler)
+	}
+	if cfg.timeout != 0 {
+		handler = Timeout(cfg.timeout)(handler)
 	}
 	if cfg.Store != nil {
 		handler = Ratelimit(cfg.Store, cfg.RateLimitConfig)(handler)
@@ -55,5 +62,11 @@ func RateLimitter(s Store, cfg RateLimitConfig) Option {
 		if s == nil {
 			c.Store = InMemoryStore()
 		}
+	}
+}
+
+func Timed(d time.Duration) Option {
+	return func(c *config) {
+		c.timeout = d
 	}
 }

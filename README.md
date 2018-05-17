@@ -93,7 +93,7 @@ You could run a custom function before executes before the handler, and after ex
 ### Middler Creation
 You can create a middleware with multiple middlewares stitched by passing `Option`, instead of manual wrapping.
 ```
-    var handler http.Handler //Your handler
+    var handler http.Handler // Your HTTP handler
     ...
     gomw.New(handler,
         gomw.Predicate(predicate),
@@ -102,7 +102,9 @@ You can create a middleware with multiple middlewares stitched by passing `Optio
     )
 
 ```
-* `gomw.RateLimitter(store, ratelimitConfig)` - if you wanna use custom store instead of inmemory
+you could pass other options
+* `gomw.RateLimitter(store, ratelimitConfig)` - If you wanna use custom store instead of inmemory
+* `gomw.Timed(duration)` - To enable the middleware to timeout with given duration
 
 
 ## Contribution

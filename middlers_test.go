@@ -45,6 +45,7 @@ func TestMiddler(t *testing.T) {
 		gomw.Predicate(predicate),
 		gomw.Logger(lg),
 		gomw.RateLimitter(rstore, rcfg),
+		gomw.Timed(2000),
 	)
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("GET", "/url", nil)
