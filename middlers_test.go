@@ -1,9 +1,11 @@
 package gomw_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/devdinu/middlers"
 	"github.com/stretchr/testify/assert"
@@ -57,4 +59,18 @@ func TestMiddler(t *testing.T) {
 	assert.True(t, lg.called, "logger should've been called")
 	assert.True(t, rstore.called, "ratelimitter should've been called")
 	assert.Equal(t, w.Code, 200)
+}
+
+func TestBla(t *testing.T) {
+	cfg := gomw.CC{Timeout: time.Duration(100)}
+
+	m := gomw.NewMiddleware(http.NotFoundHandler(),
+		gomw.MwWithTimeout(time.Duration(10)),
+		gomw.MwWithStats("127.0.0.1"),
+	)
+
+	fmt.Println(cfg, m)
+	//	TimeoutF := func(c *MwConfig) {
+	//		c.timeout = time.Duration(10)
+	//	}
 }
