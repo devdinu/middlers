@@ -22,7 +22,7 @@ type requestLog struct {
 func (rl *requestLog) String() string {
 	//TODO: could log status if its negroni.ResponseWriter
 	return fmt.Sprintf(`{"method: %s, url: %s, status: %d, requested_at: %v, response_at: %v, duration_ms: %v}`,
-		rl.r.Method, rl.r.URL.Path, rl.status, rl.start.Format(time.RFC3339), rl.end.Format(time.RFC3339), rl.end.Sub(rl.start)*time.Millisecond)
+		rl.r.Method, rl.r.URL.Path, rl.status, rl.start.Format(time.RFC3339), rl.end.Format(time.RFC3339), rl.end.Sub(rl.start))
 }
 
 func RequestLogger(next http.Handler, optloggers ...logger) http.HandlerFunc {
@@ -36,6 +36,7 @@ func RequestLogger(next http.Handler, optloggers ...logger) http.HandlerFunc {
 		rl := &requestLog{}
 		rl.start = time.Now()
 		rw := NewResponseWriter(w)
+		time.Sleep(time.Second)
 
 		next.ServeHTTP(rw, r)
 
